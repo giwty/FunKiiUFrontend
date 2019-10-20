@@ -1,18 +1,18 @@
 #!/usr/bin/python
 
 
-from src.util import *
+from util import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog
 from tkinter import messagebox
-from src.logger import log
-from src.settings import *
+from logger import log
+from settings import *
 import json
 import os
 import _thread
 import xml.etree.ElementTree
-from src import FunKiiUmod as fnk, fileUtil, downloader
+import FunKiiUmod as fnk, fileUtil, downloader
 
 gamelist_array = []
 download_list = []

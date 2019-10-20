@@ -2,7 +2,7 @@
 
 import shutil
 import os
-from src.logger import *
+from logger import *
 
 
 def delete_folder(path):

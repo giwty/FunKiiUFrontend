@@ -1,7 +1,7 @@
 """This class is used to make CRUD operations on the settings."""
 
 import configparser
-from src import logger
+import logger
 
 titleKeyURL = ""
 filters = []

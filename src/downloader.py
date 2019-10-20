@@ -1,11 +1,11 @@
 try:
-    from src import FunKiiUmod as fnk, settings
+    import FunKiiUmod as fnk, settings
 except Exception:
     pass
 
 import _thread
 import time
-from src.logger import log
+from logger import log
 
 download_list = []
 downloading = []

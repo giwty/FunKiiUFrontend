@@ -1,11 +1,11 @@
 """This is a utility class to help with misc tasks"""
 
 import urllib.request
-from src.logger import *
+from logger import *
 import binascii
 import os
 import zipfile
-from src import FunKiiUmod as fnk, settings
+import FunKiiUmod as fnk, settings
 
 funkiiu_url = "https://raw.githubusercontent.com/llakssz/FunKiiU/master/FunKiiUmod.py"
 wiiutdb_url = "http://www.gametdb.com/wiiutdb.zip"
