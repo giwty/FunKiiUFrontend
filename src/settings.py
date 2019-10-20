@@ -1,8 +1,7 @@
 """This class is used to make CRUD operations on the settings."""
 
-import ConfigParser
-import logger
-import os
+import configparser
+from src import logger
 
 titleKeyURL = ""
 filters = []
@@ -20,33 +19,33 @@ libraryDir = ""
 
 def create_settings():
     """Create an empty settings file."""
-    settings = ConfigParser.RawConfigParser()
+    settings = configparser.RawConfigParser()
     settings.add_section("Settings")
-    settings.set("Settings", "titleKeyURL", "")
+    settings.set("Settings", "titleKeyURL", "http://vault.titlekeys.ovh")
     settings.set("Settings", "downloadDir", "")
     settings.set("Settings", "libraryDir", "")
     settings.set("Settings", "showUSA", "True")
-    settings.set("Settings", "showJPN", "True")
+    settings.set("Settings", "showJPN", "False")
     settings.set("Settings", "showEUR", "True")
     settings.set("Settings", "showDLC", "True")
     settings.set("Settings", "showUPDATE", "True")
-    settings.set("Settings", "showDEMO", "True")
+    settings.set("Settings", "showDEMO", "False")
     settings.set("Settings", "showGAME", "True")
     settings.set("Settings", "ticketOnly", "False")
     settings.set("Settings", "patchDEMO", "True")
     settings.set("Settings", "patchDLC", "True")
-    settings.set("Settings", "titleKeyNag", "True")
+    settings.set("Settings", "titleKeyNag", "False")
     settings.set("Settings", "maxDownloads", "1")
     settings.set("Settings", "retry", "3")
     settings.set("Settings", "dlKeysStartup", "3")
     settings.set("Settings", "dlRssStartup", "True")
-    with open("settings.cfg", "wb") as settingsfile:
+    with open("settings.cfg", "w") as settingsfile:
         settings.write(settingsfile)
 
 
 def read_settings():
     """Load settings from file."""
-    settings = ConfigParser.RawConfigParser()
+    settings = configparser.RawConfigParser()
     settings.read("settings.cfg")
     global titleKeyURL
     global downloadDir
@@ -98,7 +97,7 @@ def read_settings():
 
 def save_settings():
     """Write settings to file."""
-    settings = ConfigParser.RawConfigParser()
+    settings = configparser.RawConfigParser()
     settings.add_section("Settings")
     settings.set("Settings", "titleKeyURL", titleKeyURL)
     settings.set("Settings", "downloadDir", downloadDir)
@@ -148,7 +147,7 @@ def save_settings():
     else:
         settings.set("Settings", "showGAME", "False")
 
-    with open("settings.cfg", "wb") as settingsfile:
+    with open("settings.cfg", "w") as settingsfile:
         settings.write(settingsfile)
         logger.log("Settings saved")
 
@@ -162,7 +161,7 @@ def set_title_key_url(url):
 try:
     with open("settings.cfg") as settingsfile:
         read_settings()
-except IOError as e:
+except FileNotFoundError as e:
     logger.log("No config file, so one is being created")
     create_settings()
     read_settings()

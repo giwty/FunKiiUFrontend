@@ -8,8 +8,7 @@ def log(msg):
     global logs
     logs.append(time.strftime("%I:%M:%S") + ": " + msg)
     if sys.stdout.encoding != None:
-        print(time.strftime("%I:%M:%S") + ": " +
-              msg.encode(sys.stdout.encoding, errors='replace'))
+        print(time.strftime("%I:%M:%S") + ": " +msg)
     else:
         print(time.strftime("%I:%M:%S") + ": " +
               msg.encode("utf-8", errors='replace'))

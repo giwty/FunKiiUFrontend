@@ -1,14 +1,11 @@
 try:
-    import FunKiiUmod as fnk
+    from src import FunKiiUmod as fnk, settings
 except Exception:
     pass
 
-import thread
-import threading
-import settings
-import os
+import _thread
 import time
-from logger import log
+from src.logger import log
 
 download_list = []
 downloading = []
@@ -25,7 +22,7 @@ def download_games():
                 download = threaded_download()
                 download.setGame(game)
                 downloading.append(download)
-                thread.start_new_thread(download.start, ())
+                _thread.start_new_thread(download.start, ())
                 download_list.remove(game)
 
 
@@ -99,6 +96,6 @@ class threaded_download(object):
 
 
 try:
-    thread.start_new_thread(download_games, ())
+    _thread.start_new_thread(download_games, ())
 except:
     log("Error: unable to start thread")

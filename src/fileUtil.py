@@ -2,7 +2,7 @@
 
 import shutil
 import os
-from logger import *
+from src.logger import *
 
 
 def delete_folder(path):
@@ -31,7 +31,7 @@ def copy_file(fsrc, ftgt, callback=None, length=16*1024):
             copied += len(buf)
             if callback:
                 callback(copied)
-            print str((int((float(copied)) / (float(os.path.getsize(fsrc)))) * 100)) + "%"
+           # print str((int((float(copied)) / (float(os.path.getsize(fsrc)))) * 100)) + "%"
         target.close()
 
 def move_file(fsrc, fdst, callback=None, length=16*1024):
@@ -46,6 +46,6 @@ def move_file(fsrc, fdst, callback=None, length=16*1024):
             copied += len(buf)
             if callback:
                 callback(copied)
-            print str((int((float(copied)) / (float(os.path.getsize(fsrc)))) * 100)) + "%"
+          #  print str((int((float(copied)) / (float(os.path.getsize(fsrc)))) * 100)) + "%"
         target.close()
         os.remove(fsrc)

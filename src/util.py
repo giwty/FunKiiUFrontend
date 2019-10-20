@@ -1,13 +1,11 @@
 """This is a utility class to help with misc tasks"""
 
-import urllib
-import settings
-from logger import *
+import urllib.request
+from src.logger import *
 import binascii
 import os
 import zipfile
-import FunKiiUmod as fnk
-import xml.etree.ElementTree
+from src import FunKiiUmod as fnk, settings
 
 funkiiu_url = "https://raw.githubusercontent.com/llakssz/FunKiiU/master/FunKiiUmod.py"
 wiiutdb_url = "http://www.gametdb.com/wiiutdb.zip"
@@ -15,7 +13,7 @@ wiiutdb_url = "http://www.gametdb.com/wiiutdb.zip"
 
 def download_funkiiu():
     try:
-        urllib.urlretrieve(funkiiu_url, "FunKiiUmod.py")
+        urllib.request.urlretrieve(funkiiu_url, "FunKiiUmod.py")
         log("FunKiiU successfully downloaded.")
     except Exception as error:
         log(error)
@@ -51,8 +49,11 @@ class Game(object):
 def download_titlekeys_json():
     log("Attempting to download titlekey json...")
     try:
-        urllib.urlretrieve(settings.titleKeyURL +
-                           "/json", "titlekeys.json")
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+        urllib.request.install_opener(opener)
+        urllib.request.urlretrieve(settings.titleKeyURL +
+                           "/json/", "titlekeys.json")
         log("titlekeys.json successfully downloaded.")
     except Exception as error:
         log(repr(error))
@@ -61,7 +62,7 @@ def download_titlekeys_json():
 def download_titlekeys_rss():
     log("Attempting to download titlekey rss...")
     try:
-        urllib.urlretrieve(settings.titleKeyURL +
+        urllib.request.urlretrieve(settings.titleKeyURL +
                            "/rss", "titlekeysrss.xml")
         log("titlekeysrss.xml successfully downloaded.")
     except Exception as error:
@@ -71,7 +72,7 @@ def download_titlekeys_rss():
 def download_wiiutdb():
     log("Attempting to download wiiutdb.zip")
     try:
-        urllib.urlretrieve(wiiutdb_url, "wiiutdb.zip")
+        urllib.request.urlretrieve(wiiutdb_url, "wiiutdb.zip")
         log("wiiutdb.zip successfully downloaded.")
         unpack_zip("wiiutdb.zip")
         log("wiiutdb.xml extracted")

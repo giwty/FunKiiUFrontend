@@ -1,24 +1,18 @@
 #!/usr/bin/python
 
-import sys
 
-reload(sys)
-sys.setdefaultencoding("utf8")
-
-from util import *
-from Tkinter import *
-from ttk import *
-import tkFileDialog
-import downloader
-import tkMessageBox as message
-from logger import log
-from settings import *
+from src.util import *
+from tkinter import *
+from tkinter.ttk import *
+from tkinter import filedialog
+from tkinter import messagebox
+from src.logger import log
+from src.settings import *
 import json
 import os
-import thread
+import _thread
 import xml.etree.ElementTree
-import FunKiiUmod as fnk
-import fileUtil
+from src import FunKiiUmod as fnk, fileUtil, downloader
 
 gamelist_array = []
 download_list = []
@@ -31,7 +25,7 @@ def save_settings():
     settings.save_settings()
     check_tilekey_json()
     refresh_gamelist()
-    thread.start_new_thread(update_rss, ())
+    #_thread.start_new_thread(update_rss, ())
 
 
 def toggle_dlkeys():
@@ -170,7 +164,7 @@ def refresh_download_listbox():
 def download_games():
     if current_selected != "" and current_selected not in download_list:
         if current_selected.size == "0.00 B":
-            message.showwarning(
+            messagebox.showwarning(
                 "Can't Download", "The file size is 0.00 B\n can't download game")
         else:
             download_list.append(current_selected)
@@ -401,13 +395,10 @@ url_input.grid(row=0, column=1, sticky=EW)
 def update_tilekey_json():
     if settings.titleKeyURL != "":
         site = settings.titleKeyURL
-        if fnk.hashlib.md5(site.encode('utf-8')).hexdigest() == fnk.KEYSITE_MD5:
-            download_titlekeys_json()
-            load_titlekeys()
-            refresh_gamelist()
-        else:
-            message.showwarning(
-                "Wrong URL", "The url is incorrect\nfix it and then save the settings and try again")
+        download_titlekeys_json()
+        load_titlekeys()
+        refresh_gamelist()
+
     else:
         log("Title key site not set in settings")
 
@@ -436,7 +427,7 @@ downloaddir_input = Entry(settings_tab, width=20)
 downloaddir_input.grid(row=3, column=1, sticky=EW, columnspan=2)
 
 def set_download_rirectory():
-    dir = tkFileDialog.askdirectory()
+    dir = filedialog.askdirectory()
     if dir != ():
         settings.downloadDir = dir
         downloaddir_input.delete(0, END)
@@ -455,7 +446,7 @@ librarydir_input = Entry(settings_tab, width=20)
 librarydir_input.grid(row=4, column=1, sticky=EW, columnspan=2)
 
 def set_library_directory():
-    dir = tkFileDialog.askdirectory()
+    dir = filedialog.askdirectory()
     if dir != ():
         settings.libraryDir = dir
         librarydir_input.delete(0, END)
@@ -604,31 +595,20 @@ rssbox.config(state="disabled")
 def update_rss():
     if settings.titleKeyURL != "":
         site = settings.titleKeyURL
-        if fnk.hashlib.md5(site.encode('utf-8')).hexdigest() == fnk.KEYSITE_MD5:
-            download_titlekeys_rss()
-            if os.path.isfile("titlekeysrss.xml"):
-                e = xml.etree.ElementTree.parse('titlekeysrss.xml').getroot()
-                rssbox.config(state="normal")
-                rssbox.delete("1.0", END)
-                rssbox.insert("1.0", "Last Build Date: " +
-                              e.find("channel").find("lastBuildDate").text + "\n")
-                for item in e.find("channel").findall("item"):
-                    rssbox.insert(END, "------------------" + "\n")
-                    for child in item:
-                        if child.text != None:
-                            rssbox.insert(END, child.tag +
-                                          ":" + child.text + "\n")
-                rssbox.config(state="disabled")
-        else:
-            log("Incorrect titlekey url")
-
-
-def refresh_btn():
-    thread.start_new_thread(update_rss, ())
-
-
-refresh_btn = Button(rss_tab, text="Refresh", command=refresh_btn)
-refresh_btn.grid(row=0, column=0)
+        download_titlekeys_rss()
+        if os.path.isfile("titlekeysrss.xml"):
+            e = xml.etree.ElementTree.parse('titlekeysrss.xml').getroot()
+            rssbox.config(state="normal")
+            rssbox.delete("1.0", END)
+            rssbox.insert("1.0", "Last Build Date: " +
+                          e.find("channel").find("lastBuildDate").text + "\n")
+            for item in e.find("channel").findall("item"):
+                rssbox.insert(END, "------------------" + "\n")
+                for child in item:
+                    if child.text != None:
+                        rssbox.insert(END, child.tag +
+                                      ":" + child.text + "\n")
+            rssbox.config(state="disabled")
 
 # about_tab stuff here
 about_tab = Frame(note)
@@ -745,13 +725,8 @@ def check_tilekey_json():
     if settings.titleKeyURL != "":
         if not os.path.isfile("titlekeys.json"):
             site = settings.titleKeyURL
-            if fnk.hashlib.md5(site.encode('utf-8')).hexdigest() == fnk.KEYSITE_MD5:
-                message.showinfo(
-                    "Success!", "Correct titlekey URL\n we will now download the file and refresh")
-                thread.start_new(update_tilekey_json, ())
-            else:
-                message.showwarning(
-                    "Wrong URL", "You entered the wrong URL\n please try again")
+            _thread.start_new(update_tilekey_json, ())
+
         else:
             load_titlekeys()
             refresh_gamelist()
@@ -762,13 +737,10 @@ def check_tilekey_json():
 def update_tilekey_json():
     if settings.titleKeyURL != "":
         site = settings.titleKeyURL
-        if fnk.hashlib.md5(site.encode('utf-8')).hexdigest() == fnk.KEYSITE_MD5:
-            download_titlekeys_json()
-            load_titlekeys()
-            refresh_gamelist()
-        else:
-            message.showwarning(
-                "Wrong URL", "You entered the wrong URL\n please try again")
+        download_titlekeys_json()
+        load_titlekeys()
+        refresh_gamelist()
+
     else:
         log("Title key site not set in settings")
 
@@ -791,14 +763,11 @@ def initialize_funkiiu_config():
             log("config exists")
     except Exception as e:
         site = settings.titleKeyURL
-        if fnk.hashlib.md5(site.encode('utf-8')).hexdigest() == fnk.KEYSITE_MD5:
-            print('Correct key site, now saving...')
-            config = fnk.load_config()
-            config['keysite'] = site
-            fnk.save_config(config)
-            print('done saving, you are good to go!')
-        else:
-            print('Wrong key site provided. Try again')
+        print('Correct key site, now saving...')
+        config = fnk.load_config()
+        #config['keysite'] = site
+        #fnk.save_config(config)
+        #print('done saving, you are good to go!')
 
 
 def update_log_tab():
@@ -832,12 +801,12 @@ check_tilekey_json()
 refresh_gamelist()
 refresh_librarylist()
 initialize_funkiiu_config()
-thread.start_new_thread(update_rss, ())
-thread.start_new_thread(enrich_gamelist, ())
+#_thread.start_new_thread(update_rss, ())
+_thread.start_new_thread(enrich_gamelist, ())
 
 
 if settings.titleKeyNag:
-    message.showinfo(
+    messagebox.showinfo(
         "Title Keys", "Before you can download any games\nYou will need to add the url from that title keys website\nin the settings and save.")
     settings.titleKeyNag = False
     note.select(settings_tab)
@@ -845,11 +814,11 @@ if settings.titleKeyNag:
     save_settings()
 
 
-thread.start_new_thread(update_log_tab, ())
+_thread.start_new_thread(update_log_tab, ())
 
 
 try:
     root.mainloop()
 except (KeyboardInterrupt, SystemExit) as e:
-    print e.message
+    print (e.message)
     sys.exit()
