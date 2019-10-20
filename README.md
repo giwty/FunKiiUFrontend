@@ -1,5 +1,6 @@
 # FunKiiUFrontend
 A UI for FunKiiU written in Python
+>This fork just makes this project work again, credit to original author  
 
 Features:
 
